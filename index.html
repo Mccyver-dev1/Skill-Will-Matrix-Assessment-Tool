@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIAM-HRBP แบบประเมินลักษณะและศักยภาพพนักงาน (Skill/Will Matrix)</title>
+    <!-- html2canvas สำหรับจับภาพหน้าจอเป็นรูปภาพ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .instructions {
+            background-color: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+
+        .instructions h3 { margin-top: 0; color: var(--primary); }
+        .instructions ul { margin-bottom: 0; padding-left: 20px; }
+
+        .profile-section {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .section-header {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 24px 0 16px 0;
+            color: #334155;
+        }
+
+        .question-card {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .options-group {
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+        }
+
+        .option-label {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .option-label:hover {
+            background-color: #f8fafc;
+            border-color: var(--primary);
+        }
+
+        .option-label input {
+            margin-bottom: 6px;
+        }
+
+        .btn-submit, .btn-download {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 24px;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover, .btn-download:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-download {
+            background-color: #10b981;
+            margin-top: 16px;
+        }
+
+        .btn-download:hover {
+            background-color: #059669;
+        }
+
+        /* Results view elements */
+        #result-card {
+            padding: 24px;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .emp-profile-card {
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .emp-profile-card p {
+            margin: 4px 0;
+        }
+
+        .group-A { background-color: #fff7ed; border-color: #f97316 !important; }
+        .group-B { background-color: #fefce8; border-color: #eab308 !important; }
+        .group-C { background-color: #f0fdf4; border-color: #22c55e !important; }
+        .group-D { background-color: #fef2f2; border-color: #ef4444 !important; }
+
+        .score-summary {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .score-badge {
+            flex: 1;
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0 10px 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .options-group {
+                flex-direction: column;
+            }
+            .option-label {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 12px;
+                padding: 10px 16px;
+            }
+            .option-label input { margin-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="main-container">
+    <!-- หน้าจอแบบทดสอบ -->
+    <div id="assessment-view">
+        <h1>แบบประเมินลักษณะและศักยภาพพนักงาน</h1>
+        <div class="subtitle">Skill/Will Matrix Assessment Tool</div>
+
+        <div class="instructions">
+            <h3>คำชี้แจง</h3>
+            <p>กรอกข้อมูลพนักงานและเลือกคะแนนประเมิน 1 ถึง 4 ในแต่ละข้อตามความเป็นจริง</p>
+            <ul>
+                <li><strong>1</strong> = ไม่จริงเลย / น้อยที่สุด</li>
+                <li><strong>2</strong> = จริงบางครั้ง / น้อย</li>
+                <li><strong>3</strong> = จริงส่วนใหญ่ / มาก</li>
+                <li><strong>4</strong> = จริงที่สุด / มากที่สุด</li>
+            </ul>
+        </div>
+
+        <form id="matrix-form">
+            <div class="profile-section">
+                <div class="form-group">
+                    <label for="empName">ชื่อเล่น (พนักงาน) *</label>
+                    <input type="text" id="empName" class="form-control" required placeholder="เช่น ปีเตอร์ ">
+                </div>
+                <div class="form-group">
+                    <label for="empDept">แผนก / ฝ่าย *</label>
+                    <input type="text" id="empDept" class="form-control" required placeholder="เช่น พัฒนาบุคลากร / HR">
+                </div>
+                <div class="form-group">
+                    <label for="startDate">วันเริ่มงาน *</label>
+                    <input type="date" id="startDate" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="section-header">หมวดที่ 1: ความสามารถและทักษะในการทำงาน (SKILL)</div>
+            <div id="skill-questions"></div>
+
+            <div class="section-header">หมวดที่ 2: ความมุ่งมั่นและแรงจูงใจในการทำงาน (WILL)</div>
+            <div id="will-questions"></div>
+
+            <button type="submit" class="btn-submit">คำนวณผลการประเมิน</button>
+        </form>
+    </div>
+
+    <!-- หน้าจอแสดงผลลัพธ์ (จะถูกนำไปเปิดใน Tab ใหม่) -->
+    <div id="result-view" style="display: none;">
+        <h1>ผลการประเมินศักยภาพพนักงาน</h1>
+        <div class="subtitle">Skill/Will Matrix Assessment Result</div>
+
+        <div id="capture-area">
+            <div class="emp-profile-card">
+                <h3 style="margin-top: 0; color: var(--primary);">ข้อมูลพนักงาน</h3>
+                <p><strong>ชื่อ-นามสกุล:</strong> <span id="res-name"></span></p>
+                <p><strong>แผนก / ฝ่าย:</strong> <span id="res-dept"></span></p>
+                <p><strong>วันเริ่มงาน:</strong> <span id="res-startdate"></span></p>
+                <p><strong>วันที่ประเมิน:</strong> <span id="res-evaldate"></span></p>
+            </div>
+
+            <div id="result-card">
+                <div class="score-summary">
+                    <div class="score-badge">
+                        <div>คะแนนทักษะ (SKILL)</div>
+                        <strong id="skill-score-display" style="font-size: 1.4rem;">- / 20</strong>
+                    </div>
+                    <div class="score-badge">
+                        <div>คะแนนแรงจูงใจ (WILL)</div>
+                        <strong id="will-score-display" style="font-size: 1.4rem;">- / 20</strong>
+                    </div>
+                </div>
+                <div class="result-title" id="group-title"></div>
+                <div id="group-description"></div>
+                <hr style="margin: 16px 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);">
+                <h4 style="margin-bottom: 8px;">แนวทางการบริหารและการพัฒนา</h4>
+                <div id="group-action"></div>
+            </div>
+        </div>
+
+        <button id="download-btn" class="btn-download">บันทึกข้อมูลส่วนตัวและผลการวิเคราะห์เป็นรูปภาพ</button>
+    </div>
+</div>
+
+<footer>
+    @2024 Siam-HRBP Soft
+</footer>
+
+<script>
+const skillQuestions = [
+    "1. คุณสามารถทำงานที่ได้รับมอบหมายได้สำเร็จตามมาตรฐาน โดยแทบไม่ต้องได้รับคำแนะนำเพิ่มเติม",
+    "2. เมื่อเกิดปัญหาในงาน คุณมีทักษะในการวิเคราะห์และแก้ไขปัญหาได้อย่างถูกต้อง",
+    "3. คุณมีความเชี่ยวชาญเฉพาะทาง หรือมีความรู้ในเนื้องานสูงกว่าเฉลี่ยของทีม",
+    "4. คุณสามารถถ่ายทอดงาน สอนงาน หรือแนะนำผู้อื่นในทีมได้",
+    "5. ผลงานของคุณมีความแม่นยำ ข้อผิดพลาดน้อย และส่งตรงตามเวลาอย่างสม่ำเสมอ"
+];
+
+const willQuestions = [
+    "6. คุณแสดงออกถึงความกระตือรือร้น พร้อมรับท้าทายหรือภารกิจใหม่ๆ อยู่เสมอ",
+    "7. คุณมีความรับผิดชอบสูง ไม่ละทิ้งงาน และส่งสัญญาณเปิดรับการเรียนรู้ตลอดเวลา",
+    "8. คุณเสนอความคิดเห็นหรือแนวทางใหม่ๆ เพื่อปรับปรุงงานให้ดีขึ้นโดยไม่ต้องรอคำสั่ง",
+    "9. คุณมีทัศนคติเชิงบวกต่อองค์กร ทีมงาน และเป้าหมายของฝ่าย",
+    "10. คุณมีความพยายามในการก้าวผ่านอุปสรรค และยินดีรับฟัง Feedback เพื่อนำไปปรับปรุงตัว"
+];
+
+const optionLabels = {
+    1: "ไม่จริงเลย",
+    2: "จริงบางครั้ง",
+    3: "จริงส่วนใหญ่",
+    4: "จริงที่สุด"
+};
+
+const groupDetails = {
+    A: {
+        code: "กลุ่ม A: High WILL, Low SKILL",
+        name: "The Enthusiast (ดาวรุ่งพุ่งแรง)",
+        desc: "มีความมุ่งมั่นสูงและอยากเรียนรู้ แต่ยังมีทักษะหรือประสบการณ์น้อย",
+        action: "เน้นการสอนงาน (Guide / Train): จัดหา Mentor ให้คำแนะนำ จัดอบรมทักษะเฉพาะทาง และกำหนดขอบเขตงานให้ชัดเจนเพื่อสร้างความมั่นใจ",
+        class: "group-A"
+    },
+    B: {
+        code: "กลุ่ม B: Low WILL, High SKILL",
+        name: "The Cynic / Burnout (ผู้เชี่ยวชาญไฟดับ)",
+        desc: "มีความสามารถหรือความเชี่ยวชาญสูง แต่เริ่มขาดแรงจูงใจหรือความมุ่งมั่นในการทำงาน",
+        action: "เน้นการสร้างแรงจูงใจ (Motivate / Re-engage): พูดคุยแบบ 1-on-1 เพื่อหาสาเหตุของการขาดไฟ ค้นหาแรงจูงใจใหม่ หรือมอบหมายบทบาทใหม่ที่ท้าทายขึ้น",
+        class: "group-B"
+    },
+    C: {
+        code: "กลุ่ม C: High WILL, High SKILL",
+        name: "The Star (เพชรเม็ดงาม)",
+        desc: "มีทั้งความสามารถสูงและความมุ่งมั่นเต็มเปี่ยม เป็นกำลังสำคัญและผู้นำในอนาคต",
+        action: "เน้นการมอบหมายและต่อยอด (Delegate / Empower): ให้อิสระในการตัดสินใจ มอบหมายโครงการสำคัญ และเตรียมความพร้อมสู่บทบาทผู้นำ",
+        class: "group-C"
+    },
+    D: {
+        code: "กลุ่ม D: Low WILL, Low SKILL",
+        name: "The Deadwood (กลุ่มต้องเร่งปรับปรุง)",
+        desc: "มีทั้งความสามารถและแรงจูงใจต่ำ ขาดการพัฒนาและแรงขับเคลื่อน",
+        action: "เน้นการตรงไปตรงมาและกำกับดูแล (Direct / PIP): สื่อสารคาดหวังชัดเจน กำหนด Performance Improvement Plan (PIP) และประเมินผลอย่างใกล้ชิด",
+        class: "group-D"
+    }
+};
+
+function renderQuestions(questions, containerId, prefix) {
+    const container = document.getElementById(containerId);
+    questions.forEach((q, index) => {
+        const qNum = index + 1;
+        const qEl = document.createElement('div');
+        qEl.className = 'question-card';
+        qEl.innerHTML = `
+            <div class="question-text">${q}</div>
+            <div class="options-group">
+                ${[1, 2, 3, 4].map(val => `
+                    <label class="option-label">
+                        <input type="radio" name="${prefix}_${qNum}" value="${val}" required>
+                        <span><strong>${val}</strong> - ${optionLabels[val]}</span>
+                    </label>
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(qEl);
+    });
+}
+
+// ตรวจสอบว่าเป็นการแสดงผลใน Tab ผลลัพธ์หรือไม่
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('mode') === 'result') {
+    document.getElementById('assessment-view').style.display = 'none';
+    document.getElementById('result-view').style.display = 'block';
+
+    // ดึงข้อมูลจาก URL Parameters
+    const name = urlParams.get('name') || '-';
+    const dept = urlParams.get('dept') || '-';
+    const startDate = urlParams.get('startDate') || '-';
+    const evalDate = urlParams.get('evalDate') || '-';
+    const skillScore = parseInt(urlParams.get('skill') || '0');
+    const willScore = parseInt(urlParams.get('will') || '0');
+
+    document.getElementById('res-name').innerText = name;
+    document.getElementById('res-dept').innerText = dept;
+    document.getElementById('res-startdate').innerText = startDate;
+    document.getElementById('res-evaldate').innerText = evalDate;
+
+    // เกณฑ์คะแนนเต็ม 20: High SKILL/WILL >= 13 (65%)
+    const isHighSkill = skillScore >= 13;
+    const isHighWill = willScore >= 13;
+
+    let groupKey = '';
+    if (isHighWill && !isHighSkill) groupKey = 'A';
+    else if (!isHighWill && isHighSkill) groupKey = 'B';
+    else if (isHighWill && isHighSkill) groupKey = 'C';
+    else groupKey = 'D';
+
+    const group = groupDetails[groupKey];
+    const resultCard = document.getElementById('result-card');
+
+    resultCard.className = group.class;
+    document.getElementById('skill-score-display').innerText = `${skillScore} / 20 (${isHighSkill ? 'High' : 'Low'})`;
+    document.getElementById('will-score-display').innerText = `${willScore} / 20 (${isHighWill ? 'High' : 'Low'})`;
+    
+    document.getElementById('group-title').innerText = `${group.code} - ${group.name}`;
+    document.getElementById('group-description').innerText = group.desc;
+    document.getElementById('group-action').innerText = group.action;
+
+    // ปุ่มดาวน์โหลดเป็นภาพ
+    document.getElementById('download-btn').addEventListener('click', function() {
+        const captureArea = document.getElementById('capture-area');
+        html2canvas(captureArea, { scale: 2 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `Skill-Will-Result-${name}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    });
+
+} else {
+    // โหมดทำแบบประเมินปกติ
+    renderQuestions(skillQuestions, 'skill-questions', 'skill');
+    renderQuestions(willQuestions, 'will-questions', 'will');
+
+    document.getElementById('matrix-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('empName').value;
+        const dept = document.getElementById('empDept').value;
+        const startDate = document.getElementById('startDate').value;
+        const evalDate = new Date().toISOString().split('T')[0];
+
+        let skillScore = 0;
+        let willScore = 0;
+
+        for (let i = 1; i <= 5; i++) {
+            skillScore += parseInt(document.querySelector(`input[name="skill_${i}"]:checked`).value);
+            willScore += parseInt(document.querySelector(`input[name="will_${i}"]:checked`).value);
+        }
+
+        // ส่งค่าไปยัง Tab ใหม่
+        const queryParams = new URLSearchParams({
+            mode: 'result',
+            name: name,
+            dept: dept,
+            startDate: startDate,
+            evalDate: evalDate,
+            skill: skillScore,
+            will: willScore
+        });
+
+        window.open(`${window.location.pathname}?${queryParams.toString()}`, '_blank');
+    });
+}
+</script>
+
+</body>
+</html>
